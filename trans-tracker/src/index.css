@@ -1,0 +1,32 @@
+header{
+  padding: 10px 16px;
+  background: rgb(65, 75, 216);
+  color: #f1f1f1;
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid #e3e6f0;
+  border-radius: 0.35rem;
+  color: #31384d;
+}
+.border-left-primary {
+  border-left: 0.25rem solid #4e73df !important;
+}
+.shadow {
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+.card-body {
+  flex: 1 1 auto;
+  padding: 1.25rem;
+}
+.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+}
