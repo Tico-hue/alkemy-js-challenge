@@ -31,8 +31,45 @@ app.get('/transactions/:id',(req,res)=>{
 });
 
 
- 
+app.post('/transactions/add',(req,res)=>{
+    
+    sequelize.Transaction
+        .create({
+            concept: req.body.concept, date: req.body.date, amount: req.body.amount, type: req.body.type 
+        }).then((result,error)=>{
+            if(error){throw error};
+            res.status(201).json(result)
+        });
+})
 
+app.delete('/transactions/del/:id',(req,res)=>{
+        sequelize.Transaction.destroy({
+        where: {
+          id: req.params.id
+        }
+      }).then((result,error)=>{
+          if(error){ throw error}
+          res.status(200).json(result)
+      });
+});
+
+app.put('/transactions/update/:id',(req,res)=>{
+      
+    
+    sequelize.Transaction
+        .update(
+            {concept:   req.body.concept,
+            date:       req.body.date,
+            amount:     req.body.amount},
+            {where:{
+                id:req.params.id
+            }}
+        ).then((result,error)=>{
+            if (error) throw error;
+            res.status(200).json(req.body);
+            console.log(result)
+    })
+})
 
 
 app.listen(PORT, () => console.log(`Server running on port: localhost:${PORT}`))  
