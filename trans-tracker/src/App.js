@@ -1,5 +1,8 @@
+
 import {useState, useEffect} from 'react';
+import Header from './components/Header';
 const App = () => {
+  const [balance,setBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const fetchTransactions = async() =>{
     try{
@@ -16,6 +19,14 @@ const App = () => {
     }
    
   }
+  const getTotalBalance = (data)=>{
+    let acuIncomes = 0;
+    let acuExpenses = 0;
+    data.forEach(transaction => (transaction['type']? acuIncomes+= transaction['amount'] : acuExpenses += transaction['amount']));
+    setBalance(acuIncomes-acuExpenses);
+    return balance
+  }
+
   useEffect(() => {
     fetchTransactions()
   }, [])
