@@ -11,7 +11,7 @@ Its a personal budget manager web app made as a challenge for alkemy labs
 #### Mysql
 #### Sequelizer
 
-##Screenshots
+## Screenshots
 ##### Homepage
 ![](screenShots/HomePage.jpg? "HomePage")
 ##### Create transaction modal form
