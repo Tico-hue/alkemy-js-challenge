@@ -1,9 +1,12 @@
 
 import {useState, useEffect} from 'react';
 import Header from './components/Header';
+import Table from './components/Table';
 const App = () => {
   const [balance,setBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
+  const [transactionsAll,setTransactionsAll] = useState([]);
+  const [idTrans,setIdTrans]= useState('')
   const fetchTransactions = async() =>{
     try{
       const res1 = await fetch('http://localhost:5000/transactions/');
