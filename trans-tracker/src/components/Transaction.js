@@ -1,6 +1,7 @@
-import React from 'react'
-import {FaEdit,FaTrash} from 'react-icons/fa'
-import { BsArrowDownLeft,BsArrowUpRight } from "react-icons/bs";
+const React =require('react') 
+const {FaEdit,FaTrash} =require('react-icons/fa')
+const {BsArrowDownLeft,BsArrowUpRight} = require("react-icons/bs");
+
 
 const Transaction = ({transaction, onDelete, onUpdate,onClick,title}) => {
     
