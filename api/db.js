@@ -1,6 +1,6 @@
 const transactions = require('./models/transactions')
 const {Sequelize} = require('sequelize')
-const sequelize = new Sequelize('alkemy','root','root', {
+const sequelize = new Sequelize('alkemy','root','rootroot', {
     host:'localhost',
     dialect:'mysql',
     dialectOptions: {decimalNumbers: true},

@@ -3,19 +3,44 @@ import Modal from 'react-bootstrap/Modal'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import {useState} from 'react'
-
-const AddTrans =(props) =>{
+import {useState, useContext, useEffect} from 'react'
+import { ModalContext } from '../ModalContext';
+const ModalForm =(props) =>{
+  
+   
+    const {ModalType, setModalType} = useContext(ModalContext)
     const [concept,setConcept] = useState('')
     const [date,setDate] = useState('')
     const [amount,setAmount] = useState(0)
     const [type,setType] = useState()
     
-    const onSubmit= (e) => {
+        
+     
+    // useEffect(()=>{
+    //   const setValues = function(){
+    //     if (ModalType.type === 'update' ){
+    //       setConcept(ModalType.transaction.concept)
+    //       setAmount(ModalType.transaction.amount)
+    //       setDate(ModalType.transaction.date)
+  
+    //     }
+    //   }
+    //   setValues()
+    //  },[])
+      
+    if (ModalType.type ==='update' && !ModalType.valuesSetted){
+      setConcept(ModalType.transaction.concept)
+      setAmount(ModalType.transaction.amount)
+      setDate(ModalType.transaction.date)
+      setModalType({...ModalType, valuesSetted:true})
+    }
+
+  
+    const onSubmit = (e) => {
         e.preventDefault()
-        if (props.title ==='Edit Transaction'){
+        if (ModalType.type ==='update'){
          
-            props.onUpdate(props.idTrans,{concept,date,amount})
+            props.onUpdate(ModalType.transaction.id,{concept,date,amount})
             props.onHide()
         }
         else{  
@@ -32,7 +57,7 @@ const AddTrans =(props) =>{
       <Modal {...props} size='lg' aria-labelledby="contained-modal-title-vcenter" className='modal-70w'>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            {props.title}
+            {ModalType? ModalType.type==='update'?'Edit ' :'Create ' :''}Transaction
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="show-grid">
@@ -54,7 +79,7 @@ const AddTrans =(props) =>{
                         <label >Amount</label>
                         <input 
                             className='form-control'
-                            type="number" required min="0" step="1.0" 
+                            type="number"  min="0" step="1.0" 
                             value = {amount}
                             required
                             onChange={(e)=> setAmount(e.target.value)}
@@ -68,14 +93,14 @@ const AddTrans =(props) =>{
                         <input 
                               type="date"
                               className='form-control' 
-                              value={date}
+                              value = {date}
                               required
                               onChange={(e) => setDate(e.target.value) }
                         />
                     </Col>
                     <Col xs={0} md={0}>
                     </Col>
-                    {props.title==='Edit Transaction'? '' : <Col xs={6} md={5}>
+                    {ModalType.type === 'update'? '' : <Col xs={6} md={5}>
                         <label>Type</label><br/>
                         <input type="radio" id="income" value={1} required  name="type" 
                         onChange={(e)=>setType(e.target.value)}
@@ -98,4 +123,4 @@ const AddTrans =(props) =>{
       </Modal>
     );
   }
-  export default AddTrans
+  export default ModalForm

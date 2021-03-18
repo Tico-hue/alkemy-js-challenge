@@ -1,57 +1,72 @@
 
 import {useState, useEffect} from 'react';
 import Header from './components/Header';
-import AddTrans from './components/AddTrans';
+import ModalForm from './components/ModalForm';
 import Table from './components/Table';
+import {ModalContext} from './ModalContext'
+
 
 const App = () => {
   const [balance,setBalance] = useState(0);
   const [modalShow, setModalShow] = useState(false);
   const [transactions, setTransactions] = useState([]);
-  const [transactionsAll,setTransactionsAll] = useState([]);
-  const [modalType, setModalType] = useState('Add Transaction')
-  const [idTrans,setIdTrans]= useState('')
+  const [ModalType, setModalType] = useState('')
+  const [transactionListSorted,setTransactionListSorted] = useState(false) 
+
+
   const fetchTransactions = async() =>{
     try{
-      const res1 = await fetch('http://localhost:5000/transactions/');
-      const data1 = await res1.json();
-      const res2 = await fetch('http://localhost:5000/transactions/balance');     
-      const data2 = await res2.json();
-      setTransactions(data1)
-      getTotalBalance(data2)
-      return data1
+      const res = await fetch('http://localhost:5000/transactions/');
+      const data = await res.json();
+      return data
     }
     catch(e){
       console.log(e)
     }
-   
-  }
-  const getTotalBalance = (data)=>{
-    let acuIncomes = 0;
-    let acuExpenses = 0;
-    data.forEach(transaction => (transaction['type']? acuIncomes+= transaction['amount'] : acuExpenses += transaction['amount']));
-    setBalance(acuIncomes-acuExpenses);
-    return balance
   }
 
   useEffect(() => {
-    fetchTransactions()
+    const getTransactions = async ()=>{
+      const transactionsFromServer = await fetchTransactions()
+      setTransactions(transactionsFromServer)
+    }
+    
+    getTransactions()
   }, [])
 
+  useEffect(() => {
+    const getTotalBalance = (transactions)=>{
+      let acuIncomes = 0;
+      let acuExpenses = 0;
+      transactions.forEach(transaction => (transaction['type']? 
+      acuIncomes+= transaction['amount'] : acuExpenses += transaction['amount']));
+      setBalance(acuIncomes-acuExpenses);
+    }
+    getTotalBalance(transactions)
+
+  }, [transactions])
+
+
+  // useEffect(()=>{
+  //   const sortTransactionsByDate = (transactions) =>{
+
+  //   }
+  // },[])
+
   const deleteTransaction = async(id)=>{
-    console.log(id)
+   
     await fetch(`http://localhost:5000/transactions/del/${id}`,
     {
       method:'DELETE'
     })
-    // setTransactions(
-    //   transactions.filter((trans)=>trans.id!== id)
-    // )
-    fetchTransactions()
+    setTransactions(
+      transactions.filter((trans)=>trans.id!== id)
+    )
+    
   };
 
-  const addTransaction = async (transaction) => {
-     await fetch(`http://localhost:5000/transactions/add`,{
+  const ModalFormaction = async (transaction) => {
+    const newTransaction = await fetch(`http://localhost:5000/transactions/add`,{
       method:'POST',
       headers:{
         'Content-type': 'application/json'
@@ -59,13 +74,15 @@ const App = () => {
       body: JSON.stringify(transaction)
 
     })
-    // setTransactions([...transactions,data])
-    fetchTransactions()
+    let data = await newTransaction.json()
+    
+    data = {...data,amount:parseInt(data.amount)}
+    setTransactions([...transactions,data])
+    
   }
 
   const updateTransaction = async(id,transaction) =>{
-    console.log(transactions)
-    await fetch(`http://localhost:5000/transactions/update/${id}`,
+    const newTransaction = await fetch(`http://localhost:5000/transactions/update/${id}`,
     {
       method:'PUT',
       headers:{
@@ -73,21 +90,35 @@ const App = () => {
       },
       body:JSON.stringify(transaction)
     })
-    console.log(transaction)
-    fetchTransactions()
+
+    let data = await newTransaction.json()
+   
+    setTransactions(
+      transactions.map(
+        (trans) =>
+        trans.id === data[0].id ? 
+        {...trans, concept: data[0].concept, amount: data[0].amount, date: data[0].date} 
+        : trans
+      )
+    ) 
   }
 
-  const setType = (type,id=null)=>{
-    setModalShow(true)
-    setModalType(type)
-    setIdTrans(id)
+  // const setType = (type,id=null)=>{
+  //   setModalShow(true)
+  //   setModalType(type)
+  //   setIdTrans(id)
+  // }
+  const onHide = () =>{
+    setModalShow(false)
+    setModalType({...ModalType,valuesSetted: false})
   }
-
-  return (
+    return (
     <div className="App">
-        <Header   title = 'Finance Tracker' total = {balance} setModal = {setType} />
-        <Table    title = {modalType} setModal={setType} transactions={transactions}  onDelete={deleteTransaction}></Table>
-        <AddTrans idTrans = {idTrans} show = {modalShow} title = {modalType} onUpdate={updateTransaction} onAdd = {addTransaction} onHide={() => setModalShow(false)} />
+        <ModalContext.Provider value={{ModalType,setModalType}}>
+          <Header   title = 'Finance Tracker' total = {balance} setModalShow = {()=> setModalShow(true)} />
+          <Table    transactions={transactions.slice(0,10)} setModalShow = {()=> setModalShow(true)}  onDelete={deleteTransaction} ></Table>
+          <ModalForm show = {modalShow} onUpdate={updateTransaction}  onAdd = {ModalFormaction} onHide={onHide} />
+        </ModalContext.Provider>
     </div>
   );
 }

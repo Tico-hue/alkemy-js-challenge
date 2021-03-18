@@ -1,10 +1,12 @@
-const React =require('react') 
+import { ModalContext } from '../ModalContext';
+import {useContext} from 'react'
+const React = require('react') 
 const {FaEdit,FaTrash} =require('react-icons/fa')
 const {BsArrowDownLeft,BsArrowUpRight} = require("react-icons/bs");
 
 
-const Transaction = ({transaction, onDelete, onUpdate,onClick,title}) => {
-    
+const Transaction = ({transaction, onDelete,setModalShow}) => {
+    const {ModalType,setModalType} = useContext(ModalContext)
     return (
         <tbody>
             <tr key= {transaction.id}>
@@ -16,7 +18,7 @@ const Transaction = ({transaction, onDelete, onUpdate,onClick,title}) => {
                     />
                     
                     <FaEdit style={{marginLeft:'20px',cursor:'pointer'}}
-                        onClick={()=>onClick('Edit Transaction',transaction.id)}
+                        onClick={() => { setModalType({type:'update',transaction: transaction,valuesSetted:false});setModalShow()}}
                     />
                 </td>
                 <td>{transaction.concept}</td>

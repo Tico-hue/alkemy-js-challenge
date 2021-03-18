@@ -1,7 +1,7 @@
 import React from 'react'
 import Transaction from './Transaction'
 
-const Table = ({transactions,onDelete,onUpdate,setModal}) => {
+const Table = ({transactions,onDelete,setModalShow}) => {
     return (
             <table className='table table-hover'>
                 <thead className="thead-dark">
@@ -19,8 +19,7 @@ const Table = ({transactions,onDelete,onUpdate,setModal}) => {
                         key = {index} 
                         transaction = {transaction} 
                         onDelete = {onDelete}
-                        onUpdate = {onUpdate}
-                        onClick= {setModal}
+                        setModalShow = {setModalShow}
                     /> 
                 ))
             }

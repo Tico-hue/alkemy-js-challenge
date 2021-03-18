@@ -1,13 +1,17 @@
 import React from 'react'
 import { FaMoneyBillWaveAlt } from "react-icons/fa";
 import Button from 'react-bootstrap/Button'
-const Header = ({title,total,setModal}) => {
+import {useContext} from 'react'
+import {ModalContext} from '../ModalContext'
+const Header = ({title,total,setModalShow}) => {
+    const {ModalType, setModalType} = useContext(ModalContext)
+
     return (
         <header className = 'header row shadow'>
             <div className= 'col-lg-8 col-md-8 col-sm-11 col-xs-11 col-9'>
                 <h2 style={{marginBottom:'40px'}}>{title}</h2>
                 <h4 style={{display:'inline-block',fontWeight:"200",marginRight:'30px'}}>Latest Transactions</h4>
-                    <Button style={{borderColor:'white',backgroundColor:'rgb(65, 75, 216)'}} onClick={()=>setModal('Add Transaction')}>
+                    <Button style={{borderColor:'white',backgroundColor:'rgb(65, 75, 216)'}} onClick={()=>{setModalType({type:'create',transaction:''});setModalShow()}}>
                         New Transaction
                     </Button>
                 
